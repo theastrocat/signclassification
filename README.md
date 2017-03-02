@@ -1,2 +1,3 @@
-# symbolsfinder
-A machine learning project for matching user input with a symbols database.
+# Sign Recognission
+A machine learning project for recognizing street signs.
+
