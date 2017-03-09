@@ -1,3 +1,4 @@
 opencv
 .DS_Store
 testing.ipynb
+*.geojson
