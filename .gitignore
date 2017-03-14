@@ -1,4 +1,6 @@
 opencv
 .DS_Store
-testing.ipynb
+*checkpoint.ipynb
 *.geojson
+/data/fullset/
+.ipynb_checkpoints/*
