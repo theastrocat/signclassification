@@ -29,38 +29,75 @@ class Make_Images(object):
         self.image_dirs = [str(x) for x in os.listdir(self.inder) if x[-1].isdigit()]
         self.image_paths = []
         self.image_paths = []
+        self.save_paths = []
         for direct in self.image_dirs:
             for subdir in os.listdir(self.inder+direct):
                 if subdir[0].isalpha():
                     self.image_paths.append(self.inder+direct+'/'+subdir+'/')
-        def main_call(self):
-            """
-            Main loop for standard run of the code.
-            """
-            for i in range(len(self.image_paths)):
-                self.make_out_dir(i)
+    def main_call(self):
+        """
+        Main loop for standard run of the code.
+        """
+        for ind in range(len(self.image_paths)):
+            self.make_out_dir(ind)
+            image_dict  = self.get_image_dict(ind)
+            c_img = self.crop_images(ind,image_dict)
+            print "Finished set: {}".format(ind)
+    def make_out_dir(self,index):
+        """
+        Creates the output directory.
+        """
+        save_path = r'data/fullset/set_{}'.format(index)
+        self.save_paths.append(save_path)
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+            print "Creating path: " + save_path
+        with open('data/fullset/set_{}/path.txt'.format(index), 'w') as f:
+            f.write(self.image_paths[index])
+    def get_image_dict(self,index):
+        """
+        Pulls an image in with PIL and
+        """
+        print "Starting set: " + str(index)
+        current = image_paths[index]
+        images = [x for x in os.listdir(current) if '.png' in x]
+        image_annot = pd.read_csv(current+self.annot, delimiter=';')
+        image_bounds = {}
+        for row in range(len(image_annot)):
+            image_bounds[image_annot.loc[row][0]] = (image_annot.loc[row][1],
+                                                    [float(x) for x in str(image_annot.loc[row][2:6]).split() if x.isdigit()]                                        )
+        return image_bounds
+    def crop_images(self,index,img_dict):
+        """
+        Crops image
+        """
+        saved_images = []
+        for im in img_dict.keys():
+            img = Image.open(current+im)
+            img2 = img.crop(tuple(img_dict[im][1]))
+            longer_side = max(img2.size)
+            horizontal_padding = (longer_side - img2.size[0]) / 2
+            vertical_padding = (longer_side - img2.size[1]) / 2
+            img3 = img2.crop(
+            (
+                -horizontal_padding,
+                -vertical_padding,
+                img2.size[0] + horizontal_padding,
+                img2.size[1] + vertical_padding
+            )
+            )
+            if img3.size[0] > img3.size[1]:
+                img4 = img3.crop((0,0,img3.size[1],img3.size[1]))
+            elif img3.size[0] < img3.size[1]:
+                img4 = img3.crop((0,0,img3.size[0],img3.size[0]))
+            else:
+                img4 = img3
+            image_str = '{}{}'.format(image_bounds_1[im][0], str(img4.size))
 
-                print "Finished set: {}".format(i)
-        def mak_out_dir(self,index):
-            """
-            Creates the output directory.
-            """
-            pass
+        
 
-        def get_image(self,index):
-            """
-            Pulls an image in with PIL
-            """
-            pass
-
-        def crop_images(self,index):
-            """
-            Crops image
-            """
-            pass
-
-        def write_images(self,image,index):
-            pass
+    def write_images(self,image,index):
+        pass
 
 
 
