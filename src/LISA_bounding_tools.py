@@ -25,14 +25,14 @@ outdir  :   str
 
 class Make_Images(object):
     def __init__(self, indir = os.getcwd(), outdir = os.getcwd()):
-        self.inder = indir
+        self.indir = indir
         self.outdir = outdir
 
         self.image_dict = {}
         self.saved_images = []
         self.sub_dirs = []
-        for directory in os.listdir(self.inder):
-            cnt_dir = os.path.join(self.inder,directory)
+        for directory in os.listdir(self.indir):
+            cnt_dir = os.path.join(self.indir,directory)
             if os.path.splitext(cnt_dir)[1] == '' and directory[0] != '.':
                 self.sub_dirs.append(cnt_dir)
 
@@ -40,13 +40,11 @@ class Make_Images(object):
         for directory in self.sub_dirs:
             for subdir in os.listdir(directory):
                 if subdir[0] == 'f':
-                    self.image_dirs.append(os.path.join(self.inder,directory,subdir))
+                    self.image_dirs.append(os.path.join(self.indir,directory,subdir))
 
 
         self.build_image_dict()
         self.make_dir('')
-        with open(os.path.join(self.outdir, 'image_dict.json'), 'w') as f:
-            json.dump(self.image_dict, f)
 
     def make_dir(self,directory):
         """
@@ -73,7 +71,7 @@ class Make_Images(object):
 
     def crop_images(self):
         """
-        Crops image
+        Crops images in the dictionary and saves it to the specified directory.
         """
         for im in self.image_dict.items():
             img = Image.open(im[1]['path'])
@@ -102,11 +100,16 @@ class Make_Images(object):
             image_str += str(x)
             self.make_dir(im[1]['type'])
             img4.save(os.path.join(self.outdir,im[1]['type'], "{}.jpg".format(image_str)))
+            self.image_dict[im[0]]['save_path'] = os.path.join(self.outdir,im[1]['type'], "{}.jpg".format(image_str))
             self.image_dict[im[0]]['cropped'] = image_str
             self.saved_images.append(image_str)
             if len(self.saved_images) % 1000 == 0:
                 print "Cropped and saved {} images".format(len(self.saved_images))
         print "Cropped and saved {} images".format(len(self.saved_images))
+
+    def save_image_dictionary(self):
+        with open(os.path.join(self.outdir, 'image_dict.json'), 'w') as f:
+            json.dump(self.image_dict, f)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -116,3 +119,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     image_maker = Make_Images(args.indir, args.outdir)
     image_maker.crop_images()
+    image_maker.save_image_dictionary()
