@@ -42,17 +42,20 @@ class Make_Images(object):
                 if subdir[0] == 'f':
                     self.image_dirs.append(os.path.join(self.inder,directory,subdir))
 
-        self.make_out_dir()
-        self.build_image_dict()
 
-    def make_out_dir(self):
+        self.build_image_dict()
+        self.make_dir('')
+        with open(os.path.join(self.outdir, 'image_dict.json'), 'w') as f:
+            json.dump(self.image_dict, f)
+
+    def make_dir(self,directory):
         """
         Creates the output directory.
         """
-        save_path = os.path.join(self.outdir, 'fullset/')
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
-            print "Creating path: " + save_path
+        if not os.path.exists(os.path.join(self.outdir,directory)):
+            os.makedirs(os.path.join(self.outdir,directory))
+            print "Creating path: " + os.path.join(self.outdir,directory)
+
     def build_image_dict(self):
         """
         Pulls an image in with PIL and
@@ -97,10 +100,13 @@ class Make_Images(object):
             while image_str + str(x)in self.saved_images:
                 x += 1
             image_str += str(x)
-            img4.save(os.path.join(self.outdir, "fullset/", "{}.jpg".format(image_str)))
+            self.make_dir(im[1]['type'])
+            img4.save(os.path.join(self.outdir,im[1]['type'], "{}.jpg".format(image_str)))
             self.image_dict[im[0]]['cropped'] = image_str
             self.saved_images.append(image_str)
-
+            if len(self.saved_images) % 1000 == 0:
+                print "Cropped and saved {} images".format(len(self.saved_images))
+        print "Cropped and saved {} images".format(len(self.saved_images))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -109,4 +115,4 @@ if __name__ == '__main__':
     parser.add_argument('--outdir', help='A file to save the pickled model object to.')
     args = parser.parse_args()
     image_maker = Make_Images(args.indir, args.outdir)
-    image_maker.standard_crop()
+    image_maker.crop_images()
