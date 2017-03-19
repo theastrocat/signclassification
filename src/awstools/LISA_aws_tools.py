@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import json
 import boto3
-
+import argparse
 
 """
 Provides a method for pulling sign images out of the LISA traffic sign dataset in aws s3 bucket.
@@ -28,7 +28,7 @@ class Make_Images(object):
         self.s3 = boto3.resource('s3')
         self.inbucket = inbucket
         self.outbucket = outbucket
-
+        self.numimgsave = 0
         self.saved_images = []
 
         # Downloads the image dictionary for the raw images.
@@ -64,8 +64,8 @@ class Make_Images(object):
             else:
                 img4 = img3
             self.save_image(img4,im[1]['type'],im[0])
-            if len(self.saved_images) % 1000 == 0:
-                print "Cropped and saved {} images".format(len(self.saved_images))
+            if len(self.numimgsave) % 100 == 0:
+                print "Cropped and saved {} images".format(self.numimgsave)
         print "Cropped and saved {} images".format(len(self.saved_images))
 
     def save_image(self,image,name,d_key):
@@ -76,17 +76,17 @@ class Make_Images(object):
         image_str += str(x)
         image_str += '.jpg'
         if image.size[0] > 12:
-            img4.save(image_str)
-            self.s3.meta.client.upload_file(self.outbucket,image_str,image_str)
+            image.save(image_str)
+            self.s3.meta.client.upload_file(image_str,self.outbucket,image_str)
             self.image_dict[d_key]['cropped'] = image_str
-        self.saved_images.append(image_str)
+            self.numimgsave += 1
+        self.saved_images.append(self.numimgsave)
 
     def save_image_dictionary(self):
-        with open('image_dict.json'), 'w') as f:
+        with open('image_dict.json', 'w') as f:
             json.dump(self.image_dict, f)
         self.s3.meta.client.upload_file(self.outbucket, 'image_dict.json', 'cropped_image_dict.json')
         print 'Saved Dictionary'
-        os.remove('image_dict.json')
 
 
 if __name__ == '__main__':
