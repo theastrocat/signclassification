@@ -56,7 +56,7 @@ class Make_Images(object):
 
     def build_image_dict(self):
         """
-        Pulls an image in with PIL and
+        Pulls builds a directory of images and the bounding boxes.
         """
         print "Building image dictionary"
         for directory in self.image_dirs:
