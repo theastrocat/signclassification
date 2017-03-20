@@ -85,7 +85,7 @@ class Make_Images(object):
     def save_image_dictionary(self):
         with open('image_dict.json', 'w') as f:
             json.dump(self.image_dict, f)
-        self.s3.meta.client.upload_file(self.outbucket, 'image_dict.json', 'cropped_image_dict.json')
+        self.s3.meta.client.upload_file('image_dict.json', self.outbucket, 'cropped_image_dict.json')
         print 'Saved Dictionary'
 
 
