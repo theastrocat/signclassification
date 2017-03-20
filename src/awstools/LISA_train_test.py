@@ -2,6 +2,8 @@ import numpy as np
 import json
 import boto3
 import os
+import argparse
+import pandas as pd
 """
 Method for creating a train-test split of the availaible LISA images.
 
@@ -20,7 +22,8 @@ class Make_Split(object):
         self.s3 = boto3.resource("s3")
         self.bucket = bucket
         self.df = None
-
+        self.signs_count_df = None
+        self.top = None
         self.s3.meta.client.download_file(self.bucket, 'cropped_image_dict.json', 'cropped_image_dict.json')
 
         with open('cropped_image_dict.json') as data:
@@ -29,18 +32,19 @@ class Make_Split(object):
         self.cropped_images = []
         for item in self.image_dict.items():
             if 'cropped' in item[1].keys():
-                self.cropped_images.append(item[1]['cropped'])
-        self.cropped_images = np.array(cropped_images)
+                self.cropped_images.append([item[1]['type'],item[1]['cropped']])
+        self.cropped_images = np.array(self.cropped_images)
 
     def build_dataframe(self):
-        index = ['Row'+str(i) for i in range(1, len(cropped_images)+1)]
+        index = ['Row'+str(i) for i in range(1, len(self.cropped_images)+1)]
         self.df = pd.DataFrame(self.cropped_images, index=index)
-        self.df['gt_100'] = df[0].map(lambda x: self.highest_counts(x))
-        self.df = df[df['gt_100'] == True].drop('gt_100', axis=1)
+        self.signs_count_df = self.df.groupby(0).agg('count')
+        self.top = self.signs_count_df.sort_values(1, ascending=False).index[:15]
+        self.df['gt_100'] = self.df[0].map(lambda x: self.highest_counts(x))
+        self.df = self.df[self.df['gt_100'] == True].drop('gt_100', axis=1)
 
     def highest_counts(self, item):
-        signs_count_df = self.df.groupby(0).agg('count')
-        if item in signs_count_df.sort_values(1, ascending=False).index.values[:15]:
+        if item in self.top:
             return True
         else:
             return False
