@@ -1,6 +1,7 @@
 opencv
 .DS_Store
-*checkpoint.ipynb
+
 *.geojson
 /data/fullset/
-.ipynb_checkpoints/*
+*.ipynb_checkpoints/*
+test/.ipynb_checkpoints/data_exploring_mapillary-checkpoint.ipynb

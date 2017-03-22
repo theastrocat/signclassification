@@ -20,7 +20,7 @@ The data will need to be cleaned by way of cropping the images down to the signs
 * Fitting a basic logistic regression model on small set of training data.
 
 ### Outcome:
-##### Benchmarks for a minimal viable product"
+##### Benchmarks for a minimal viable product:
 * A model that makes predictions off a small data set after using transfer learning.
 * Building a website to house and show off the project.
 
