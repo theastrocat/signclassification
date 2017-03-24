@@ -1,11 +1,13 @@
 from __future__ import division
 from flask import Flask, render_template, request, jsonify, make_response
 from cStringIO import StringIO
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
-from src.build_classification_model import ProbabiltyFinder
+from src.lrprobfinder import ProbabilityFinder
 from src.image_get import RandImage
 import requests
 import pickle
@@ -39,7 +41,6 @@ with open('data/model.pkl') as f:
 
 @app.route('/', methods=['GET'])
 def index():
-    refresh()
     return render_template('index.html')
 
 @app.route('/refresh', methods=['POST'])
@@ -62,7 +63,6 @@ def probplot():
     cnt_features = ri.current_features
     probs = model.predict_proba(cnt_features.reshape(1,-1))
     labels = model.classes_()
-    print labels
     fig, ax = plt.subplots(figsize=(15,15))
     sortargs = probs.argsort()[0][-3:]
     lbl = labels[sortargs]
@@ -90,6 +90,7 @@ def probplot():
     canvas=FigureCanvas(fig)
     png_output = StringIO()
     canvas.print_png(png_output)
+    plt.close(fig)
     response=make_response(png_output.getvalue())
     response.headers['Content-Type'] = 'image/png'
     return response
