@@ -1,5 +1,5 @@
 from __future__ import division
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, session
 from cStringIO import StringIO
 import matplotlib
 matplotlib.use('Agg')
@@ -33,11 +33,13 @@ labelmaker = {
     u'yield': 'Yield'}
 
 app = Flask(__name__)
-imageurl  = 'http://0.0.0.0:5000/images/'
+#imageurl  = 'http://0.0.0.0:5000/images/'
 
 with open('data/model.pkl') as f:
     model = pickle.load(f)
 
+with open('/Users/brian/Documents/keys/secretkey.txt') as f:
+    secretkey = f.readline()
 
 @app.route('/', methods=['GET'])
 def index():
@@ -46,10 +48,11 @@ def index():
 @app.route('/refresh', methods=['POST'])
 def refresh():
     current_image_url, _  = ri.getrandomimage()
+    session['features'] = ri.current_features
     return jsonify({
         'truelabel': labelmaker[ri.current_label],
         'current_image_url': current_image_url,
-        'predictions_url': '{}currentplot'.format(imageurl)
+        'predictions_url': '/images/currentplot'
     })
 
 
@@ -60,7 +63,7 @@ def images(cropzonekey):
 
 @app.route("/images/currentplot")
 def probplot():
-    cnt_features = ri.current_features
+    cnt_features = session['features']
     probs = model.predict_proba(cnt_features.reshape(1,-1))
     labels = model.classes_()
     fig, ax = plt.subplots(figsize=(15,15))
@@ -95,9 +98,7 @@ def probplot():
     response.headers['Content-Type'] = 'image/png'
     return response
 
-
-
-
+app.secret_key = secretkey
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True, debug=True)
