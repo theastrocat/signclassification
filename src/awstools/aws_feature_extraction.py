@@ -7,9 +7,21 @@ import json
 import boto3
 import argparse
 
+"""
+Method for feature extraction from numpy array files that are saved on aws.
+
+When run as a module, this will load in arrays of image strings, pull them in
+from a designated bucket, run feature extraction on them and then export the
+features back to the same bucket as a numpy array.
+
+USE:
+
+python aws_feature_extraction --bucket <nameofbucket> --type <(train/test/full)>
+"""
 
 
-class Feature_Extraction(object):
+
+class FeatureExtraction(object):
     def __init__(self,bucket):
         self.s3 = boto3.resource("s3")
         self.bucket = bucket
@@ -39,7 +51,7 @@ class Feature_Extraction(object):
             for ind, image in enumerate(img_list):
                 self.s3.meta.client.download_file(self.bucket, image, image)
                 if (ind % 100 == 0):
-                    print 'Processing {}th images...'.format(ind)
+                    print 'Processing {}th image...'.format(ind)
                     # Save periodically
                     np.save('{}_features'.format(typ), features)
                 if not gfile.Exists(image):
@@ -51,7 +63,7 @@ class Feature_Extraction(object):
                                         {'DecodeJpeg/contents:0': image_data})
                 features[ind, :] = np.squeeze(predictions)
                 os.remove(image)
-        print "Final Save: "
+        print "Final Save: {} images processed".format(ind)
         np.save('{}_features'.format(typ), features)
         self.s3.meta.client.upload_file('{}_features.npy'.format(typ), self.bucket, '{}_features.npy'.format(typ))
         #return features
@@ -79,5 +91,5 @@ if __name__ == '__main__':
     parser.add_argument('--bucket', help='Input bucket name with cropped images and image files')
     parser.add_argument('--type', help='Input type of features you want (train,test,full)')
     args = parser.parse_args()
-    feature_extractor = Feature_Extraction(args.bucket)
+    feature_extractor = FeatureExtraction(args.bucket)
     feature_extractor.extract_features(args.type)

@@ -5,3 +5,11 @@ opencv
 /data/fullset/
 *.ipynb_checkpoints/*
 test/.ipynb_checkpoints/data_exploring_mapillary-checkpoint.ipynb
+webapp/classification model testing.ipynb
+webapp/.ipynb_checkpoints/
+
+Untitled.ipynb
+data/
+*.json
+*.ipynb
+test/
