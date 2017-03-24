@@ -60,7 +60,9 @@ def images(cropzonekey):
 @app.route("/images/currentplot")
 def probplot():
     cnt_features = ri.current_features
-    probs, labels = model.predict_proba(cnt_features.reshape(1,-1))
+    probs = model.predict_proba(cnt_features.reshape(1,-1))
+    labels = model.classes_()
+    print labels
     fig, ax = plt.subplots(figsize=(15,15))
     sortargs = probs.argsort()[0][-3:]
     lbl = labels[sortargs]
