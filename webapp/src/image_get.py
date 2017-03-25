@@ -21,7 +21,8 @@ class RandImage(object):
         self.getrandomimage()
     def getrandomimage(self):
         current_index = np.random.choice(range(len(self.test_set)))
-        self.current_features = self.test_set[current_index][:-1]
         self.current_image = baseurl + self.test_set[current_index][-1]
         self.current_label = self.test_paths[current_index,-2]
-        return self.current_image, self.current_features
+        return self.current_image, current_index
+    def getimagefeatures(self, indx):
+        return self.test_set[indx][:-1]

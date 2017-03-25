@@ -1,5 +1,5 @@
 from __future__ import division
-from flask import Flask, render_template, request, jsonify, make_response, session
+from flask import Flask, render_template, request, jsonify, make_response
 from cStringIO import StringIO
 import matplotlib
 matplotlib.use('Agg')
@@ -11,6 +11,7 @@ from src.lrprobfinder import ProbabilityFinder
 from src.image_get import RandImage
 import requests
 import pickle
+from ast import literal_eval
 import numpy as np
 plt.style.use('ggplot')
 
@@ -33,13 +34,8 @@ labelmaker = {
     u'yield': 'Yield'}
 
 app = Flask(__name__)
-#imageurl  = 'http://0.0.0.0:5000/images/'
-
 with open('data/model.pkl') as f:
     model = pickle.load(f)
-
-with open('/Users/brian/Documents/keys/secretkey.txt') as f:
-    secretkey = f.readline()
 
 @app.route('/', methods=['GET'])
 def index():
@@ -47,12 +43,11 @@ def index():
 
 @app.route('/refresh', methods=['POST'])
 def refresh():
-    current_image_url, _  = ri.getrandomimage()
-    session['features'] = ri.current_features
+    current_image_url, indx  = ri.getrandomimage()
     return jsonify({
         'truelabel': labelmaker[ri.current_label],
         'current_image_url': current_image_url,
-        'predictions_url': '/images/currentplot'
+        'predictions_url': '/images/currentplot/{}'.format(indx)
     })
 
 
@@ -61,9 +56,9 @@ def images(cropzonekey):
     return render_template("images.html", title=cropzonekey)
 
 
-@app.route("/images/currentplot")
-def probplot():
-    cnt_features = session['features']
+@app.route("/images/currentplot/<int:indx>")
+def probplot(indx):
+    cnt_features = ri.getimagefeatures(indx)
     probs = model.predict_proba(cnt_features.reshape(1,-1))
     labels = model.classes_()
     fig, ax = plt.subplots(figsize=(15,15))
@@ -97,8 +92,6 @@ def probplot():
     response=make_response(png_output.getvalue())
     response.headers['Content-Type'] = 'image/png'
     return response
-
-app.secret_key = secretkey
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True, debug=True)
