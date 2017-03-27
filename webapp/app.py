@@ -73,13 +73,13 @@ def probplot(indx):
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
     ax.set_xlim([0,1])
-    rects = ax.barh(x, y, width, color="blue", alpha = 0.5)
+    rects = ax.barh(x, y, width, color="#AAAAAA", alpha = 0.5)
     ax.vlines(x=0.005, ymin=-1.0, ymax=3.0,linewidth=2,color = 'k')
     ax.set_yticks(np.arange(3) + width/20.)
     for i, rect in enumerate(rects):
         length = round(rect.get_width(),4)
         ax.text(.5, rect.get_y() + rect.get_height()/10,
-                '{} - {}%'.format(labelmaker[lbl[i]], round(100 * length,2)),
+                '{} - {}%'.format(labelmaker[lbl[i]], int(100 * length)),
                 ha='center', va='bottom',size=20)
     fig.figurePatch.set_alpha(0)
     plt.grid(False)
