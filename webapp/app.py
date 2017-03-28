@@ -50,12 +50,6 @@ def refresh():
         'predictions_url': '/images/currentplot/{}'.format(indx)
     })
 
-
-@app.route('/images/<cropzonekey>')
-def images(cropzonekey):
-    return render_template("images.html", title=cropzonekey)
-
-
 @app.route("/images/currentplot/<int:indx>")
 def probplot(indx):
     cnt_features = ri.getimagefeatures(indx)
