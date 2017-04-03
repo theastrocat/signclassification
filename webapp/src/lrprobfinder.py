@@ -1,5 +1,9 @@
 from sklearn.linear_model import LogisticRegression
 import numpy as np
+"""
+Class for use in creating pickled classification model. Used in
+'build_classification_model.py'. Fits a out-of-the-box logistic regression.
+"""
 
 class ProbabilityFinder(object):
     """
