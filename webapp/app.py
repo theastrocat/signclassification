@@ -15,6 +15,11 @@ from ast import literal_eval
 import numpy as np
 plt.style.use('ggplot')
 
+"""
+Flask app for producing plots on my website.
+
+"""
+
 ri = RandImage()
 labelmaker = {
     u'addedLane': 'Added Lane',
