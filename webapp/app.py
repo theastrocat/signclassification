@@ -17,10 +17,10 @@ plt.style.use('ggplot')
 
 """
 Flask app for producing plots on my website.
-
 """
 
-ri = RandImage()
+ri = RandImage() # Class for calling
+# Makes predicted labels pretty:
 labelmaker = {
     u'addedLane': 'Added Lane',
     u'keepRight': 'Keep Right',
@@ -39,15 +39,26 @@ labelmaker = {
     u'yield': 'Yield'}
 
 app = Flask(__name__)
+
+"""
+Loads in classification model.
+"""
 with open('data/model.pkl') as f:
     model = pickle.load(f)
 
 @app.route('/', methods=['GET'])
 def index():
+    """
+    Renders main page.
+    """
     return render_template('index.html')
 
 @app.route('/refresh', methods=['POST'])
 def refresh():
+    """
+    Creates a json object for passing to the website when classify button
+    is pushed.
+    """
     current_image_url, indx  = ri.getrandomimage()
     return jsonify({
         'truelabel': labelmaker[ri.current_label],
@@ -57,6 +68,10 @@ def refresh():
 
 @app.route("/images/currentplot/<int:indx>")
 def probplot(indx):
+    """
+    Creates bar plots for the website by passing features through the
+    classification model stored in the pickle.
+    """
     cnt_features = ri.getimagefeatures(indx)
     probs = model.predict_proba(cnt_features.reshape(1,-1))
     labels = model.classes_()
