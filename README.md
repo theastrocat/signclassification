@@ -27,7 +27,7 @@ In all there were 15 classes with about 5500 images ranging from 12x12 to ~150x1
 * A [multinomial logistic regression](https://github.com/theastrocat/signclassification/blob/master/webapp/src/lrprobfinder.py) classifier was fit to the extracted features and [saved](https://github.com/theastrocat/signclassification/blob/master/webapp/build_classification_model.py) as a pickle.
 
 ### Web Application:
-A web application was deployed utilizing the pickled model as well as extracted test features to make predictions on random images from the test set at: [signedge.tech](https://www.signedge.tech).
+A web application was deployed utilizing the pickled model as well as extracted test features to make predictions on random images from the test set at: signedge.tech
 
 ### Feature Visualization:
 * [TSNE](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwjC_cHg78LUAhUKMyYKHfUNB3EQFggvMAE&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FT-distributed_stochastic_neighbor_embedding&usg=AFQjCNFNloF4LXMkkGz-66kOigE-tw6enw&sig2=fHCUq9UzcstAye3snthUfw) dimensionality reduction was done on the feature space to look at the groupings of the classes.
