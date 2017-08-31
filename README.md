@@ -8,7 +8,7 @@ In general, training a good neural network to do image classification can take a
 This is where transfer learning comes in. Transfer learning is an extremely powerful tool in machine learning when it comes to utilizing neural networks. By passing an image through the network without retraining it, but stopping it before making its classification prediction, you can extract features that the network thought were important enough about your image. You can then train a classification model on these features with good results.
 
 ### Business Understanding:
-There is always need for new methods in recognition and classification of symbols and street signs for a number of uses including: self driving cars, street mapping, and driver safety systems. Classification has been done before, but there are no references that can be found for utilizing a transfer learning from a pre trained neural network.
+There is always need for new methods in recognition and classification of symbols and street signs for a number of uses including: self driving cars, street mapping, and driver safety systems. Classification has been done before, but there are no references that can be found for utilizing a transfer learning from a pre trained neural network. I believe that using a transfer learning method can greatly increase build time and would benefit smaller companies interested in these markets.
 
 ### The Data Preparation:
 The data used in this demonstration is the LISA traffic sign dataset that can be found [here](http://cvrr.ucsd.edu/LISA/lisa-traffic-sign-dataset.html).
@@ -17,7 +17,7 @@ The data used in this demonstration is the LISA traffic sign dataset that can be
 
 * A script was created [here](https://github.com/theastrocat/signclassification/blob/master/src/awstools/LISA_aws_tools.py) to pull each image from the bucket as well as the image dictionary created in the previous step, crop the images, pad them with black to square and then put them back on S3. The script has a lower threshold for images (12x12 pixels).
 
-In all there were 15 classes with about 5500 images ranging from 12x12 to ~150x150 pixels. The classes are fairly unbalanced with stop signs making up the majority of the dataset.
+The 15 most populous classes were selected with about 5500 total images ranging from 12x12 to ~150x150 pixels. The classes are fairly unbalanced with stop signs making up the majority of the dataset.
 
 ### Modeling steps:
 * Using the cropped images dictionary created in the above steps, a train/test split is made using [this](https://github.com/theastrocat/signclassification/blob/master/src/awstools/LISA_train_test.py) script.
@@ -29,18 +29,17 @@ In all there were 15 classes with about 5500 images ranging from 12x12 to ~150x1
 ### Web Application:
 A web application was deployed utilizing the pickled model as well as extracted test features to make predictions on random images from the test set at: signedge.tech
 
+### Outcome:
+* Modeling resulted in a ~94% accuracy, and ~0.2 log-loss under 5-fold cross validation.
+
 ### Feature Visualization:
-* [TSNE](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&cad=rja&uact=8&ved=0ahUKEwjC_cHg78LUAhUKMyYKHfUNB3EQFggvMAE&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FT-distributed_stochastic_neighbor_embedding&usg=AFQjCNFNloF4LXMkkGz-66kOigE-tw6enw&sig2=fHCUq9UzcstAye3snthUfw) dimensionality reduction was done on the feature space to look at the groupings of the classes.
+* [TSNE](https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding) dimensionality reduction was done on the feature space get a better sense of at the stratification of the classes.
 
 <img src="data/plots/signboundaries1.png" width="400"><img src="data/plots/legend.png" width="150">
 
-### Outcome:
-##### Benchmarks for a minimal viable product:
-* A model that makes predictions off a small data set after using transfer learning.
-* Building a website to house and show off the project.
 
 ### Next Steps:
- Using the LIME method for explanation of where the predictive power comes from in my image set.
+ Using the [LIME method](https://homes.cs.washington.edu/~marcotcr/blog/lime/) for explanation of where the predictive power comes from in my image set.
 
 
 
