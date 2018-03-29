@@ -13,7 +13,7 @@ There is always need for new methods in recognition and classification of symbol
 ### The Data Preparation:
 The data used in this demonstration is the LISA traffic sign dataset that can be found [here](http://cvrr.ucsd.edu/LISA/lisa-traffic-sign-dataset.html).
 
-* As the image set is too large for this repo, the images are stored and accessed through AWS S3 bucket. The dataset comes with annotations for the location of signs within each image. A script, [here](https://github.com/tensorflow/models/tree/master/research/inception) was created pull the images from the LISA file system and upload them to S3 Bucket as well as save a JSON file with file name, original path, bounding boxes, and sign label.
+* As the image set is too large for this repo, the images are stored and accessed through AWS S3 bucket. The dataset comes with annotations for the location of signs within each image. A script, [here](https://github.com/theastrocat/signclassification/blob/master/src/awstools/aws_image_helper.py), was created pull the images from the LISA file system and upload them to S3 Bucket as well as save a JSON file with file name, original path, bounding boxes, and sign label.
 
 * A script was created [here](https://github.com/theastrocat/signclassification/blob/master/src/awstools/LISA_aws_tools.py) to pull each image from the bucket as well as the image dictionary created in the previous step, crop the images, pad them with black to square and then put them back on S3. The script has a lower threshold for images (12x12 pixels).
 
