@@ -27,7 +27,7 @@ The 15 most populous classes were selected with about 5500 total images ranging 
 * A [multinomial logistic regression](https://github.com/theastrocat/signclassification/blob/master/webapp/src/lrprobfinder.py) classifier was fit to the extracted features and [saved](https://github.com/theastrocat/signclassification/blob/master/webapp/build_classification_model.py) as a pickle.
 
 ### Web Application:
-A web application was deployed utilizing the pickled model as well as extracted test features to make predictions on random images from the test set at: signedge.tech
+A web application was deployed utilizing the pickled model as well as extracted test features to make predictions on random images from the test set at: signedge.astrocat.space
 
 ### Outcome:
 * Modeling resulted in a ~94% accuracy, and ~0.2 log-loss under 5-fold cross validation.
